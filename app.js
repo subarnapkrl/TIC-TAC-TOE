@@ -1,6 +1,6 @@
 //This is GameBoard Module
 let gameBoardObject=(function(){
-    let gameBoardArray=["O"];
+    let gameBoardArray=["X"];
     return{gameBoardArray};
 })();
 
@@ -13,24 +13,45 @@ let playerObjectFunction=(playerName,playerNumber,assignmentXO)=>{
     };
 };
 
-//This is function for rendering array to the SCREEN
-let renderArrayToScreen=(function()
-{
-    let gridBoxes=document.querySelectorAll(".grid-box");
-    gridBoxes[0].textContent=gameBoardObject.gameBoardArray;
-    
 
-    console.log("Show the array as seen inside gameboardobject",gameBoardObject);
-    console.log("Show the nodelist of the gameobject ",gameBoardObject.gameBoardArray);
 
-    return{}
-
-})();
 
 //This is GAME DISPLAY FLOW CONTROLLER Module
-let displayFlowController=(function()
+let displayFlowControllerModule=(function()
 {
-    return{};
+    const makeMove=document.querySelectorAll(".game-board-button");
+
+    //INDEXING & LOOPING THROUGH EACH NODES
+    let i=0;
+    makeMove.forEach(makeMoves=>{
+        makeMoves.dataset.linkedButton=i;
+        makeMoves.addEventListener("click",renderArray);
+
+        function renderArray()
+        {
+            const gridBoxes=document.querySelectorAll(".grid-box");
+
+            //INDEXING & LOOPING THROUGH EACH GRID BOXES
+            let i=0;
+            gridBoxes.forEach(gbox=>{
+                gbox.dataset.linkedButton=i;
+
+                //RENDER CLICKED PLAY ON THE GRIDBOX & DISPLAY
+
+                if(gbox.getAttribute("data-linked-button")==makeMoves.getAttribute("data-linked-button"))
+                {
+                    gbox.textContent=gameBoardObject.gameBoardArray[gameBoardObject.gameBoardArray-1];
+
+                    console.log("SHOW ME MY MAKEMOVES LINKED NODE VALUE........",makeMoves.dataset.linkedButton);
+                    console.log("SHOW ME MY MAKEMOVES LINKED BUTTON VALUE........",gbox.dataset.linkedButton);
+
+                }
+                i++;
+            })
+            i++;
+        }
+    })
+    
 })();
 
 let player1=playerObjectFunction("Subarna",1,"X");
