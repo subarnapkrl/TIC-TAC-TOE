@@ -16,6 +16,14 @@ h1{
     color: #ef4444;
     margin-bottom: 10px;
     text-align: center;
+    font-size: 32px;
+}
+.note{
+    font-size: 16px;
+    font-style: italic;
+    font-weight: bold;
+    color: #be123c;
+    text-decoration: underline;
 }
 
 .container{
@@ -50,7 +58,7 @@ h1{
 .game-board-button:hover{
     opacity: 0.8;
 }
-.start-game-button{
+.btn{
     display: block;
     margin-top: 25px;
     background: #65a30d;
@@ -61,7 +69,18 @@ h1{
     font-weight: 500;
     font-size: 18px;
 }
-.start-game-button:hover{
+.btn:hover{
     background-color: #2dd4bf;
     color: black;
+}
+.clear-game-button{
+    background-color: #4c1d95;
+}
+.win{
+    font-size: 56px;
+    color:#1e40af;
+}
+.bts{
+    display: flex;
+    justify-content: space-between;
 }
