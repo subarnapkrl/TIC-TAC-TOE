@@ -69,13 +69,13 @@ let gameBoardObject=(function(){
             //PLAYER MOVES
             if(gameBoardArray.length==0)
             {
-                alert("PLAYER1 MAKE YOUR MOVE:");
+                alert(gameBoardObject.playerArray[0]+" MAKE YOUR MOVE:");
                 gameBoardArray.push(playerArray[2]);
                 console.log("SHOW ME THE CURRENT GAMEBOARD ARRAY......",gameBoardArray);
             }
             else if(gameBoardArray[gameBoardArray.length-1]=="X")
             {
-                alert("PLAYER2 MAKE YOUR MOVE:");
+                alert(gameBoardObject.playerArray[3]+" MAKE YOUR MOVE:");
                 gameBoardArray.push(playerArray[5]);
                 console.log("SHOW ME THE CURRENT GAMEBOARD ARRAY......",gameBoardArray);
                 
@@ -126,7 +126,74 @@ let displayFlowControllerModule=(function()
 
                 }
                 i++;
-            })
+            });
+
+            //CHECKING FOR WIN
+            function checkWinner(playerSign)
+            {
+                let horizontal=[0,3,6].map(i=>{
+                    return [i,i+1,i+2]
+                });
+                let vertical=[0,1,2].map(i=>{
+                    return [i,i+3,i+6]
+                });
+
+                let diagonal=[[0,4,8],[2,4,6]];
+
+                let allWIns=[].concat(horizontal).concat(vertical).concat(diagonal);
+
+                let results=allWIns.some(indices=>{
+                    return gridBoxes[indices[0]].textContent==playerSign && gridBoxes[indices[1]].textContent==playerSign &&gridBoxes[indices[2]].textContent==playerSign 
+
+                })
+                return results;
+            }
+
+            if(checkWinner("X")==true)
+            {
+                console.log(gameBoardObject.playerArray[0]," WINS!");
+                let body=document.querySelector(".heading");
+                let playerWinMsg=document.createElement("h1");
+                playerWinMsg.classList.add("win");
+                playerWinMsg.textContent=(gameBoardObject.playerArray[0]+" WINS!")
+                body.appendChild(playerWinMsg);
+
+                makeMove.forEach(makeMoves=>{
+                    makeMoves.remove();
+                })
+                startGameBtn.remove();
+                return;
+            }
+            else if(checkWinner("O")==true)
+            {
+                console.log(gameBoardObject.playerArray[3]," WINS!");
+                let body=document.querySelector(".heading");
+                let playerWinMsg=document.createElement("h1");
+                playerWinMsg.classList.add("win");
+                playerWinMsg.textContent=(gameBoardObject.playerArray[3]+" WINS!")
+                body.appendChild(playerWinMsg);
+
+                makeMove.forEach(makeMoves=>{
+                    makeMoves.remove();
+                })
+                startGameBtn.remove();
+                return;
+            }
+            else if(gameBoardObject.gameBoardArray.length==9)
+            {
+                console.log("TIE!");
+                let body=document.querySelector(".heading");
+                let playerWinMsg=document.createElement("h1");
+                playerWinMsg.classList.add("win");
+                playerWinMsg.textContent=("TIE!");
+                body.appendChild(playerWinMsg);
+
+                makeMove.forEach(makeMoves=>{
+                    makeMoves.remove();
+                })
+                startGameBtn.remove();
+                return;
+            }
             gameBoardObject.makePlayerMove();
         }
         i++;
@@ -136,16 +203,22 @@ let displayFlowControllerModule=(function()
     let startGameBtn=document.querySelector(".start-game-button");
     startGameBtn.addEventListener("click",createPlayer);
 
+    let restartGameBtn=document.querySelector(".clear-game-button");
+    restartGameBtn.addEventListener("click",function()
+    {
+        location.reload();
+    })
+
     return{};
     
 })();
 
 
 //This is PlayerInformation Factory Function
-let playerObjectFunction=(playerName,playerNumber,assignmentXO)=>{
+// let playerObjectFunction=(playerName,playerNumber,assignmentXO)=>{
    
     
-    return{
-        playerName,playerNumber,assignmentXO
-    };
-};
+//     return{
+//         playerName,playerNumber,assignmentXO
+//     };
+// };
