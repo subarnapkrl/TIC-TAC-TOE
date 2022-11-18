@@ -1,17 +1,96 @@
+let createPlayer=()=>{
+    //WE HAVE TO LOOP 4 TIMES BECOZ ONE FOR PLAYER1 (REAL INPUT AS WELL BLANK INPUT) & ANOTHER ONE FOR PLAYER2 (REAL INPUT AS WELL BLANK INPUT)
+
+    for(let i=0;i<4;i++)
+    {
+        //GREATER THAN 6 BECOZ PLAYER1(NAME,ASSIGNED-NUMBER,ASSIGNED-SIGN) & PLAYER2(NAME,ASSIGNED-NUMBER,ASSIGNED-SIGN)
+
+        if(gameBoardObject.playerArray.length>=6)
+        {
+            gameBoardObject.makePlayerMove();
+            //DON'T HAVE TO LOOP AGAIN
+            break;
+        }
+        else if(gameBoardObject.playerArray.length==0)
+        {
+            let playerName=prompt("ENTER PLAYER1 NAME:");
+
+            if(playerName=="" || playerName==null)
+            {
+                alert("Sorry! Name cannot be blank! TRY AGAIN");
+                //HAVE TO LOOP AGAIN FROM THE TOP
+                continue;
+            }
+
+            let playerNumber=1;
+            let playerAssigned="X";
+
+            alert("You are PLAYER1 and your assigned letter is X");
+
+            gameBoardObject.playerArray.push(playerName,playerNumber,playerAssigned);
+
+            console.log("PlayerArray has:.......",gameBoardObject.playerArray);
+
+
+        }
+        else if(gameBoardObject.playerArray.length!=0)
+        {
+            let playerName=prompt("ENTER PLAYER2 NAME:");
+
+            if(playerName=="" || playerName==null)
+            {
+                alert("Sorry! Name cannot be blank! TRY AGAIN");
+                //HAVE TO LOOP AGAIN FROM THE TOP
+                continue;
+            }
+
+            let playerNumber=2;
+            let playerAssigned="O";
+
+            alert("You are PLAYER1 and your assigned letter is X");
+
+            gameBoardObject.playerArray.push(playerName,playerNumber,playerAssigned);
+
+            console.log("PlayerArray has:.......",gameBoardObject.playerArray);
+
+
+        }
+    }
+}
+
 //This is GameBoard Module
 let gameBoardObject=(function(){
-    let gameBoardArray=["X"];
-    return{gameBoardArray};
+    let gameBoardArray=[];
+    let playerArray=[];
+
+    let makePlayerMove=()=>{
+        if(playerArray.length==6 && gameBoardArray.length<9)
+        {
+            //PLAYER MOVES
+            if(gameBoardArray.length==0)
+            {
+                alert("PLAYER1 MAKE YOUR MOVE:");
+                gameBoardArray.push(playerArray[2]);
+                console.log("SHOW ME THE CURRENT GAMEBOARD ARRAY......",gameBoardArray);
+            }
+            else if(gameBoardArray[gameBoardArray.length-1]=="X")
+            {
+                alert("PLAYER2 MAKE YOUR MOVE:");
+                gameBoardArray.push(playerArray[5]);
+                console.log("SHOW ME THE CURRENT GAMEBOARD ARRAY......",gameBoardArray);
+                
+            }
+            else if(gameBoardArray[gameBoardArray.length-1]=="O")
+            {
+                alert("PLAYER1 MAKE YOUR MOVE:");
+                gameBoardArray.push(playerArray[2]);
+                console.log("SHOW ME THE CURRENT GAMEBOARD ARRAY......",gameBoardArray);
+            }
+        }
+    }
+    return{gameBoardArray,playerArray,makePlayerMove};
 })();
 
-//This is PlayerInformation Factory Function
-let playerObjectFunction=(playerName,playerNumber,assignmentXO)=>{
-   
-    
-    return{
-        playerName,playerNumber,assignmentXO
-    };
-};
 
 
 
@@ -40,7 +119,7 @@ let displayFlowControllerModule=(function()
 
                 if(gbox.getAttribute("data-linked-button")==makeMoves.getAttribute("data-linked-button"))
                 {
-                    gbox.textContent=gameBoardObject.gameBoardArray[gameBoardObject.gameBoardArray-1];
+                    gbox.textContent=gameBoardObject.gameBoardArray[gameBoardObject.gameBoardArray.length-1];
 
                     console.log("SHOW ME MY MAKEMOVES LINKED NODE VALUE........",makeMoves.dataset.linkedButton);
                     console.log("SHOW ME MY MAKEMOVES LINKED BUTTON VALUE........",gbox.dataset.linkedButton);
@@ -48,12 +127,25 @@ let displayFlowControllerModule=(function()
                 }
                 i++;
             })
-            i++;
+            gameBoardObject.makePlayerMove();
         }
+        i++;
     })
+
+    //STARTING THE GAME
+    let startGameBtn=document.querySelector(".start-game-button");
+    startGameBtn.addEventListener("click",createPlayer);
+
+    return{};
     
 })();
 
-let player1=playerObjectFunction("Subarna",1,"X");
-let player2=playerObjectFunction("Hetal",2,"O");
-renderArrayToScreen;
+
+//This is PlayerInformation Factory Function
+let playerObjectFunction=(playerName,playerNumber,assignmentXO)=>{
+   
+    
+    return{
+        playerName,playerNumber,assignmentXO
+    };
+};
