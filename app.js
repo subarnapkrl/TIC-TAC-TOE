@@ -1,224 +1,123 @@
-let createPlayer=()=>{
-    //WE HAVE TO LOOP 4 TIMES BECOZ ONE FOR PLAYER1 (REAL INPUT AS WELL BLANK INPUT) & ANOTHER ONE FOR PLAYER2 (REAL INPUT AS WELL BLANK INPUT)
 
-    for(let i=0;i<4;i++)
-    {
-        //GREATER THAN 6 BECOZ PLAYER1(NAME,ASSIGNED-NUMBER,ASSIGNED-SIGN) & PLAYER2(NAME,ASSIGNED-NUMBER,ASSIGNED-SIGN)
+const tiles = document.querySelectorAll(".tile");
+const PLAYER_X = "X";
+const PLAYER_O = "O";
+let turn = PLAYER_X;
 
-        if(gameBoardObject.playerArray.length>=6)
-        {
-            gameBoardObject.makePlayerMove();
-            //DON'T HAVE TO LOOP AGAIN
-            break;
-        }
-        else if(gameBoardObject.playerArray.length==0)
-        {
-            let playerName=prompt("ENTER PLAYER1 NAME:");
+const boardState = Array(tiles.length);
+boardState.fill(null);
 
-            if(playerName=="" || playerName==null)
-            {
-                alert("Sorry! Name cannot be blank! TRY AGAIN");
-                //HAVE TO LOOP AGAIN FROM THE TOP
-                continue;
-            }
-
-            let playerNumber=1;
-            let playerAssigned="X";
-
-            alert("You are PLAYER1 and your assigned letter is X");
-
-            gameBoardObject.playerArray.push(playerName,playerNumber,playerAssigned);
-
-            console.log("PlayerArray has:.......",gameBoardObject.playerArray);
+//Elements
+const strike = document.getElementById("strike");
+const gameOverArea = document.getElementById("game-over-area");
+const gameOverText = document.getElementById("game-over-text");
+const playAgain = document.getElementById("play-again");
+playAgain.addEventListener("click", startNewGame);
 
 
-        }
-        else if(gameBoardObject.playerArray.length!=0)
-        {
-            let playerName=prompt("ENTER PLAYER2 NAME:");
 
-            if(playerName=="" || playerName==null)
-            {
-                alert("Sorry! Name cannot be blank! TRY AGAIN");
-                //HAVE TO LOOP AGAIN FROM THE TOP
-                continue;
-            }
+tiles.forEach((tile) => tile.addEventListener("click", tileClick));
 
-            let playerNumber=2;
-            let playerAssigned="O";
+function setHoverText() {
+  //remove all hover text
+  tiles.forEach((tile) => {
+    tile.classList.remove("x-hover");
+    tile.classList.remove("o-hover");
+  });
 
-            alert("You are PLAYER1 and your assigned letter is X");
+  const hoverClass = `${turn.toLowerCase()}-hover`;
 
-            gameBoardObject.playerArray.push(playerName,playerNumber,playerAssigned);
-
-            console.log("PlayerArray has:.......",gameBoardObject.playerArray);
-
-
-        }
+  tiles.forEach((tile) => {
+    if (tile.innerText == "") {
+      tile.classList.add(hoverClass);
     }
+  });
 }
 
-//This is GameBoard Module
-let gameBoardObject=(function(){
-    let gameBoardArray=[];
-    let playerArray=[];
+setHoverText();
 
-    let makePlayerMove=()=>{
-        if(playerArray.length==6 && gameBoardArray.length<9)
-        {
-            //PLAYER MOVES
-            if(gameBoardArray.length==0)
-            {
-                alert(gameBoardObject.playerArray[0]+" MAKE YOUR MOVE:");
-                gameBoardArray.push(playerArray[2]);
-                console.log("SHOW ME THE CURRENT GAMEBOARD ARRAY......",gameBoardArray);
-            }
-            else if(gameBoardArray[gameBoardArray.length-1]=="X")
-            {
-                alert(gameBoardObject.playerArray[3]+" MAKE YOUR MOVE:");
-                gameBoardArray.push(playerArray[5]);
-                console.log("SHOW ME THE CURRENT GAMEBOARD ARRAY......",gameBoardArray);
-                
-            }
-            else if(gameBoardArray[gameBoardArray.length-1]=="O")
-            {
-                alert("PLAYER1 MAKE YOUR MOVE:");
-                gameBoardArray.push(playerArray[2]);
-                console.log("SHOW ME THE CURRENT GAMEBOARD ARRAY......",gameBoardArray);
-            }
-        }
+function tileClick(event) {
+  if (gameOverArea.classList.contains("visible")) {
+    return;
+  }
+
+  const tile = event.target;
+  const tileNumber = tile.dataset.index;
+  if (tile.innerText != "") {
+    return;
+  }
+
+  if (turn === PLAYER_X) {
+    tile.innerText = PLAYER_X;
+    boardState[tileNumber - 1] = PLAYER_X;
+    turn = PLAYER_O;
+  } else {
+    tile.innerText = PLAYER_O;
+    boardState[tileNumber - 1] = PLAYER_O;
+    turn = PLAYER_X;
+  }
+
+  
+  setHoverText();
+  checkWinner();
+}
+
+function checkWinner() {
+  //Check for a winner
+  for (const winningCombination of winningCombinations) {
+    //Object Destructuring
+    const { combo, strikeClass } = winningCombination;
+    const tileValue1 = boardState[combo[0] - 1];
+    const tileValue2 = boardState[combo[1] - 1];
+    const tileValue3 = boardState[combo[2] - 1];
+
+    if (
+      tileValue1 != null &&
+      tileValue1 === tileValue2 &&
+      tileValue1 === tileValue3
+    ) {
+      strike.classList.add(strikeClass);
+      gameOverScreen(tileValue1);
+      return;
     }
-    return{gameBoardArray,playerArray,makePlayerMove};
-})();
+  }
 
+  //Check for a draw
+  const allTileFilledIn = boardState.every((tile) => tile !== null);
+  if (allTileFilledIn) {
+    gameOverScreen(null);
+  }
+}
 
+function gameOverScreen(winnerText) {
+  let text = "Draw!";
+  if (winnerText != null) {
+    text = `Winner is ${winnerText}!`;
+  }
+  gameOverArea.className = "visible";
+  gameOverText.innerText = text;
+  
+}
 
+function startNewGame() {
+  strike.className = "strike";
+  gameOverArea.className = "hidden";
+  boardState.fill(null);
+  tiles.forEach((tile) => (tile.innerText = ""));
+  turn = PLAYER_X;
+  setHoverText();
+}
 
-
-//This is GAME DISPLAY FLOW CONTROLLER Module
-let displayFlowControllerModule=(function()
-{
-    const makeMove=document.querySelectorAll(".game-board-button");
-
-    //INDEXING & LOOPING THROUGH EACH NODES
-    let i=0;
-    makeMove.forEach(makeMoves=>{
-        makeMoves.dataset.linkedButton=i;
-        makeMoves.addEventListener("click",renderArray);
-
-        function renderArray()
-        {
-            const gridBoxes=document.querySelectorAll(".grid-box");
-
-            //INDEXING & LOOPING THROUGH EACH GRID BOXES
-            let i=0;
-            gridBoxes.forEach(gbox=>{
-                gbox.dataset.linkedButton=i;
-
-                //RENDER CLICKED PLAY ON THE GRIDBOX & DISPLAY
-
-                if(gbox.getAttribute("data-linked-button")==makeMoves.getAttribute("data-linked-button"))
-                {
-                    gbox.textContent=gameBoardObject.gameBoardArray[gameBoardObject.gameBoardArray.length-1];
-
-                    console.log("SHOW ME MY MAKEMOVES LINKED NODE VALUE........",makeMoves.dataset.linkedButton);
-                    console.log("SHOW ME MY MAKEMOVES LINKED BUTTON VALUE........",gbox.dataset.linkedButton);
-
-                }
-                i++;
-            });
-
-            //CHECKING FOR WIN
-            function checkWinner(playerSign)
-            {
-                let horizontal=[0,3,6].map(i=>{
-                    return [i,i+1,i+2]
-                });
-                let vertical=[0,1,2].map(i=>{
-                    return [i,i+3,i+6]
-                });
-
-                let diagonal=[[0,4,8],[2,4,6]];
-
-                let allWIns=[].concat(horizontal).concat(vertical).concat(diagonal);
-
-                let results=allWIns.some(indices=>{
-                    return gridBoxes[indices[0]].textContent==playerSign && gridBoxes[indices[1]].textContent==playerSign &&gridBoxes[indices[2]].textContent==playerSign 
-
-                })
-                return results;
-            }
-
-            if(checkWinner("X")==true)
-            {
-                console.log(gameBoardObject.playerArray[0]," WINS!");
-                let body=document.querySelector(".heading");
-                let playerWinMsg=document.createElement("h1");
-                playerWinMsg.classList.add("win");
-                playerWinMsg.textContent=(gameBoardObject.playerArray[0]+" WINS!")
-                body.appendChild(playerWinMsg);
-
-                makeMove.forEach(makeMoves=>{
-                    makeMoves.remove();
-                })
-                startGameBtn.remove();
-                return;
-            }
-            else if(checkWinner("O")==true)
-            {
-                console.log(gameBoardObject.playerArray[3]," WINS!");
-                let body=document.querySelector(".heading");
-                let playerWinMsg=document.createElement("h1");
-                playerWinMsg.classList.add("win");
-                playerWinMsg.textContent=(gameBoardObject.playerArray[3]+" WINS!")
-                body.appendChild(playerWinMsg);
-
-                makeMove.forEach(makeMoves=>{
-                    makeMoves.remove();
-                })
-                startGameBtn.remove();
-                return;
-            }
-            else if(gameBoardObject.gameBoardArray.length==9)
-            {
-                console.log("TIE!");
-                let body=document.querySelector(".heading");
-                let playerWinMsg=document.createElement("h1");
-                playerWinMsg.classList.add("win");
-                playerWinMsg.textContent=("TIE!");
-                body.appendChild(playerWinMsg);
-
-                makeMove.forEach(makeMoves=>{
-                    makeMoves.remove();
-                })
-                startGameBtn.remove();
-                return;
-            }
-            gameBoardObject.makePlayerMove();
-        }
-        i++;
-    })
-
-    //STARTING THE GAME
-    let startGameBtn=document.querySelector(".start-game-button");
-    startGameBtn.addEventListener("click",createPlayer);
-
-    let restartGameBtn=document.querySelector(".clear-game-button");
-    restartGameBtn.addEventListener("click",function()
-    {
-        location.reload();
-    })
-
-    return{};
-    
-})();
-
-
-//This is PlayerInformation Factory Function
-// let playerObjectFunction=(playerName,playerNumber,assignmentXO)=>{
-   
-    
-//     return{
-//         playerName,playerNumber,assignmentXO
-//     };
-// };
+const winningCombinations = [
+  //rows
+  { combo: [1, 2, 3], strikeClass: "strike-row-1" },
+  { combo: [4, 5, 6], strikeClass: "strike-row-2" },
+  { combo: [7, 8, 9], strikeClass: "strike-row-3" },
+  //columns
+  { combo: [1, 4, 7], strikeClass: "strike-column-1" },
+  { combo: [2, 5, 8], strikeClass: "strike-column-2" },
+  { combo: [3, 6, 9], strikeClass: "strike-column-3" },
+  //diagonals
+  { combo: [1, 5, 9], strikeClass: "strike-diagonal-1" },
+  { combo: [3, 5, 7], strikeClass: "strike-diagonal-2" },
+];
