@@ -222,3 +222,51 @@ let displayFlowControllerModule=(function()
 //         playerName,playerNumber,assignmentXO
 //     };
 // };
+
+/*
+VERY SIMPLE WAY:--
+
+
+let currentTurn='X';
+let newArrray=Array(9).fill(null);
+
+
+function handleClickEvent(element)
+{
+    let clickedId=element.id;
+    if(newArrray[clickedId]!=null) return;
+
+    newArrray[clickedId]=currentTurn;
+   
+
+    element.innerText=currentTurn;
+    checkWinner();
+
+    currentTurn=currentTurn==="X"?"O":"X";
+
+}
+
+function checkWinner()
+{
+    if(
+            ( newArrray[0]!=null && newArrray[0]==newArrray[1] && newArrray[1]==newArrray[2]) ||
+            (newArrray[3]!=null && newArrray[3]==newArrray[4] && newArrray[4]==newArrray[5]) ||
+            (newArrray[6]!=null && newArrray[6]==newArrray[7] && newArrray[7]==newArrray[8]) ||
+            (newArrray[0]!=null && newArrray[0]==newArrray[3] && newArrray[3]==newArrray[6]) ||
+            (newArrray[1]!=null && newArrray[1]==newArrray[4] && newArrray[4]==newArrray[7]) ||
+            (newArrray[2]!=null && newArrray[2]==newArrray[5] && newArrray[5]==newArrray[8]) ||
+            (newArrray[0]!=null && newArrray[0]==newArrray[4] && newArrray[4]==newArrray[8]) ||
+            (newArrray[2]!=null && newArrray[2]==newArrray[4] && newArrray[4]==newArrray[6])
+    )
+            {
+                console.log(currentTurn);
+                document.write(`WINNER IZ : ${currentTurn}`);
+                return;
+            }
+    if(!newArrray.some(el=>el==null)) {
+        document.write(`DRAW!!!`)
+    }
+
+}
+
+*/
